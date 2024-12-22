@@ -1,15 +1,18 @@
 import {useState} from "react";
 
 export default function Form(){
-    const [InputName,setInputName] = useState('')
-    const [InputAge,setInputAge] = useState('')
+   
     const [InputConditions,setInputConditions] = useState(false)
-    const InputNameChange=()=>{
-        setInputName(document.querySelector('#name').value)
+    const [formValues,setformValues] = useState('')
+    const handelChange=(e)=>{
+        const id = e.currentTarget.id
+        const value= e.currentTarget.value
+        setformValues(prevState=>{
+            return {...prevState,...{[id]:value}}
+        })
+        console.log(formValues)
     }
-    const InputAgeChange=()=>{
-        setInputAge(document.querySelector('#age').value)
-    }
+    
     const InputConditionChange=()=>{
         setInputConditions(document.querySelector('#accept').Checked)
     }
@@ -18,12 +21,12 @@ export default function Form(){
 
         <div className="form-group">
                 <label>Name</label>
-                <input type="text" name='name' className='form-control' id="name"  onChange={InputNameChange}/>
+                <input type="text" name='name' className='form-control' id="name"  onChange={handelChange}/>
             </div>
 
             <div className="form-group">
                 <label>Age</label>
-                <input type="text" name='city' className='form-control' id="age"  onChange={InputAgeChange}/>
+                <input type="text" name='city' className='form-control' id="age"  onChange={handelChange}/>
             </div>
             <div className="form-check">
                
