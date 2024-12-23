@@ -46,7 +46,10 @@ export default function Form(){
 
             <div className="form-group">
                
-            <button className="btn btn-primary">Save</button>
+            <button onClick={(e)=>{
+                e.preventDefault()
+                console.log(InputAgeRef.current.value)
+            }} className="btn btn-primary">Save</button>
                 
             </div>
             <div className="form-group">
