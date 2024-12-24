@@ -9,13 +9,33 @@ export default function FormValidation(){
     const acceptAllConditions = useRef()
     const submitForm = (e) => {
         e.preventDefault()
+        const nameValue =name.current.value 
+        const  messageValue =message.current.value
+        const emailValue = email.current.value
+        const acceptAllConditionsValue = acceptAllConditions.current.checked
+        setIsFormSent(true)
+        resetForm()
+        
     }
-
+    const [isFormSent, setIsFormSent] = useState(false)
+    const resetForm = () => {
+        name.current.value = ''
+        email.current.value = ''
+        message.current.value = ''
+        acceptAllConditions.current.checked = false
+    }
 
 
 
     return <div className="container">
         <form onSubmit={submitForm}>
+        {isFormSent ?
+            <div className="alert alert-success" role="alert">
+            <strong>Success</strong> Message sent successfully !!
+           
+            </div>
+            :""
+        }
         <h1>Contact</h1>
     <div className="form-outline mb-4 ">
                     <label className="form-label" htmlFor="name">Name</label>
