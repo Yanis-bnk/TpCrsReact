@@ -1,42 +1,65 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
-export default function FormValidation() {
-  const name = useRef();
-  const email = useRef();
-  const message = useRef();
-  const acceptAllConditions = useRef();
-  const [errors, setErrors] = useState([]);
+const ContactForm = () => {
+  const [errors, setErrors] = useState({});
   const [isFormSent, setIsFormSent] = useState(false);
 
+  const name = useRef(null);
+  const email = useRef(null);
+  const message = useRef(null);
+  const acceptAllConditions = useRef(null);
+
   const validateForm = () => {
+    let isFormValid = true;
+    let newErrors = {};
+
     const nameValue = name.current.value.trim();
     const emailValue = email.current.value.trim();
     const messageValue = message.current.value.trim();
     const acceptAllConditionsValue = acceptAllConditions.current.checked;
 
-    const newErrors = [];
-
-    if (nameValue === "") {
-      newErrors.push({ field: "name", message: "Le nom est vide." });
+    if (!nameValue) {
+      newErrors.name = "Le nom est obligatoire.";
+      isFormValid = false;
     }
 
-    if (emailValue === "") {
-      newErrors.push({ field: "email", message: "L'adresse email est vide." });
-    } else if (!/\S+@\S+\.\S+/.test(emailValue)) {
-      newErrors.push({ field: "email", message: "L'adresse email n'est pas valide." });
+    if (!emailValue) {
+      newErrors.email = "L'adresse email est obligatoire.";
+      isFormValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(emailValue)) {
+      newErrors.email = "L'adresse email n'est pas valide.";
+      isFormValid = false;
     }
 
-    if (messageValue === "") {
-      newErrors.push({ field: "message", message: "Le message est vide." });
-    }
+    if (!messageValue) {
+      newErrors.message = "Le message est obligatoire.";
+      isFormValid = false;
+    }else if (messageValue.length < 200) {
+        newErrors.message = "Le message doit contenir au moins 200 caractères.";
+        isFormValid = false;
+      }
+      
 
     if (!acceptAllConditionsValue) {
-      newErrors.push({ field: "acceptAllConditions", message: "Vous devez accepter toutes les conditions." });
+      newErrors.acceptAllConditions = "Vous devez accepter les conditions.";
+      isFormValid = false;
     }
 
     setErrors(newErrors);
+    return isFormValid;
+  };
 
-    return newErrors.length === 0; // Retourne true si pas d'erreurs
+  const handleInputChange = () => {
+    // Réévaluer la validité du formulaire lors de chaque modification
+    validateForm();
+  };
+
+  const resetForm = () => {
+    name.current.value = "";
+    email.current.value = "";
+    message.current.value = "";
+    acceptAllConditions.current.checked = false;
+    setErrors({});
   };
 
   const submitForm = (e) => {
@@ -49,21 +72,6 @@ export default function FormValidation() {
     }
   };
 
-  const resetForm = () => {
-    name.current.value = "";
-    email.current.value = "";
-    message.current.value = "";
-    acceptAllConditions.current.checked = false;
-  };
-
-  const displayErrors = () => {
-    return errors.map((error, index) => (
-      <li key={index}>
-        <strong>{error.field} :</strong> {error.message}
-      </li>
-    ));
-  };
-
   return (
     <div className="container">
       {isFormSent && (
@@ -73,52 +81,89 @@ export default function FormValidation() {
       )}
 
       <form onSubmit={submitForm}>
-        {errors.length > 0 && (
-          <div className="alert alert-danger" role="alert">
-            <strong>Erreurs :</strong>
-            <ul>{displayErrors()}</ul>
-          </div>
-        )}
-
         <h1>Contact</h1>
 
+        {/* Champ Nom */}
         <div className="form-outline mb-4">
           <label className="form-label" htmlFor="name">
             Nom
           </label>
-          <input type="text" id="name" className="form-control" ref={name} />
+          <input
+            type="text"
+            id="name"
+            className={`form-control ${errors.name ? "is-invalid" : ""}`}
+            ref={name}
+            onChange={handleInputChange}
+          />
+          {errors.name && <div className="invalid-feedback">{errors.name}</div>}
         </div>
 
+        {/* Champ Email */}
         <div className="form-outline mb-4">
           <label className="form-label" htmlFor="email">
             Adresse email
           </label>
-          <input type="text" id="email" className="form-control" ref={email} />
+          <input
+            type="text"
+            id="email"
+            className={`form-control ${errors.email ? "is-invalid" : ""}`}
+            ref={email}
+            onChange={handleInputChange}
+          />
+          {errors.email && (
+            <div className="invalid-feedback">{errors.email}</div>
+          )}
         </div>
 
+        {/* Champ Message */}
         <div className="form-outline mb-4">
           <label className="form-label" htmlFor="message">
             Message
           </label>
-          <textarea className="form-control" id="message" rows="4" ref={message}></textarea>
+          <textarea
+            id="message"
+            className={`form-control ${errors.message ? "is-invalid" : ""}`}
+            rows="4"
+            ref={message}
+            onChange={handleInputChange}
+          ></textarea>
+          {errors.message && (
+            <div className="invalid-feedback">{errors.message}</div>
+          )}
         </div>
 
+        {/* Case à cocher */}
         <div className="form-check mb-4">
           <input
-            className="form-check-input"
+            className={`form-check-input ${
+              errors.acceptAllConditions ? "is-invalid" : ""
+            }`}
             type="checkbox"
             id="acceptAllConditions"
             ref={acceptAllConditions}
+            onChange={handleInputChange}
           />
           <label className="form-check-label" htmlFor="acceptAllConditions">
             J'accepte toutes les conditions
           </label>
+          {errors.acceptAllConditions && (
+            <div className="invalid-feedback">
+              {errors.acceptAllConditions}
+            </div>
+          )}
         </div>
 
-        <button type="submit" className="btn btn-primary w-100 mb-4">
+        {/* Bouton Envoyer */}
+        <button
+          disabled={Object.keys(errors).length > 0}
+          type="submit"
+          className="btn btn-primary w-100 mb-4"
+        >
           Envoyer
         </button>
       </form>
     </div>
   );
-}
+};
+
+export default ContactForm;
