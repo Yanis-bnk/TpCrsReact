@@ -1,6 +1,12 @@
 import React, { useRef, useState } from "react";
+import { COLORS } from "../design-system/color";
 
 const ContactForm = () => {
+  const ContainerStyle={
+    backgroundColor: COLORS.primary
+  }
+
+ 
   const [errors, setErrors] = useState({});
   const [isFormSent, setIsFormSent] = useState(false);
 
@@ -73,7 +79,7 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="container">
+    <div style={ContainerStyle} className="container">
       {isFormSent && (
         <div className="alert alert-success" role="alert">
           <strong>Succès :</strong> Message envoyé avec succès !
