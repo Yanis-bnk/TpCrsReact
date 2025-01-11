@@ -18,6 +18,14 @@ let cars = [
         "year": 2020
     },
     {
+        "brand": "Lexusccccccccccccccccc",
+        "model": "GXdddddddddddddd",
+        "body": "4WDddddddddddddd",
+        "color": "blddddddddddddack",
+        "price": "50eeeeee000$",
+        "year": 2020
+    },
+    {
         "brand": "nissan",
         "model": "sunny",
         "body": "4WD",
